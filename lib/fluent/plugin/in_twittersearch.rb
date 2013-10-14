@@ -8,7 +8,8 @@ module Fluent
         config_param :oauth_token, :string
         config_param :oauth_token_secret, :string
         config_param :tag, :string
-        config_param :keyword, :string
+        config_param :keyword, :string,:default => nil
+        config_param :hashtag, :string,:default => nil
         config_param :count,   :integer
         config_param :run_interval,   :integer
         config_param :result_type, :string
@@ -30,6 +31,7 @@ module Fluent
                                              :oauth_token => @oauth_token,
                                              :oauth_token_secret => @oauth_token_secret
                                             )
+            raise Fluent::ConfigError.new if @keyword.nil? and @hashtag.nil?
         end
 
         def start
@@ -39,25 +41,28 @@ module Fluent
 
         def search
             tweets = []
-            @twitter.search(@keyword,
+            @twitter.search(@keyword.nil? ? "##{@hashtag}" : @keyword,
                                     :count => @count,
                                     :result_type => @result_type).results.reverse.map do |result|
-                tweet = {}
-                [:created_at,:id,:text,:retweet_count,:favorite_count].each do |key|
-                    tweet[key] = result[key]
+
+                tweet = Hash.new
+                [:created_at,:id,:retweet_count,:favorite_count].each do |key|
+                    tweet.store(key.to_s, result[key])
                 end
-                [:id,:screen_name,:name,:profile_image_url,:profile_image_url_https].each do |key|
-                    tweet[key] = result.user[key]
+                [:id,:screen_name,:profile_image_url,:profile_image_url_https].each do |key|
+                    tweet.store(key.to_s, result.user[key])
                 end
-                tweet[:time] = Engine.now
+                tweet.store('text',result.text.force_encoding('utf-8'))
+                tweet.store('name',result.user.name.force_encoding('utf-8'))
                 tweets << tweet
             end
             tweets
         end
+
         def run
             loop do
                 search.each do |tweet|
-                    Engine.emit tweet[:time],@tag, tweet
+                    Engine.emit @tag,Engine.now,tweet
                 end
                 sleep @run_interval
             end

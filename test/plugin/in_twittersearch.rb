@@ -24,6 +24,18 @@ class FileInputTest < Test::Unit::TestCase
     end
 
     def test_configure
+        assert_raise Fluent::ConfigError do
+            d = create_driver %[
+              consumer_key        T5dTrSxS3oXqBbaoYZERw
+              consumer_secret     Trg3qrO7dUSkKZeGxgjmi3B11JuFhjwhiWIkwWKDe0
+              oauth_token         1960044126-heQQwLkiqoTj7uEJAVy0WDUZEEZDJfQqk7C4JIz
+              oauth_token_secret  r0JZ258nTeYzfJ6PZcpD8Pd1ulgawXFt2fP5J5lzZ
+              tag                 input.twitter
+              count               1
+              run_interval            60
+              result_type         recent
+            ]
+        end
         d = create_driver %[
           consumer_key        T5dTrSxS3oXqBbaoYZERw
           consumer_secret     Trg3qrO7dUSkKZeGxgjmi3B11JuFhjwhiWIkwWKDe0
@@ -31,6 +43,7 @@ class FileInputTest < Test::Unit::TestCase
           oauth_token_secret  r0JZ258nTeYzfJ6PZcpD8Pd1ulgawXFt2fP5J5lzZ
           tag                 input.twitter
           keyword             rakuten
+          hashtag             rakuten
           count               1
           run_interval            60
           result_type         recent
@@ -42,6 +55,7 @@ class FileInputTest < Test::Unit::TestCase
         assert_equal 'r0JZ258nTeYzfJ6PZcpD8Pd1ulgawXFt2fP5J5lzZ', d.instance.oauth_token_secret
         assert_equal 'input.twitter', d.instance.tag
         assert_equal 'rakuten', d.instance.keyword
+        assert_equal 'rakuten', d.instance.hashtag
         assert_equal 1, d.instance.count
         assert_equal 60, d.instance.run_interval
         assert_equal 'recent', d.instance.result_type
@@ -59,6 +73,7 @@ class FileInputTest < Test::Unit::TestCase
           oauth_token_secret  r0JZ258nTeYzfJ6PZcpD8Pd1ulgawXFt2fP5J5lzZ8
           tag                 input.twitter
           keyword             rakuten
+          hashtag             rakuten
           count               1
           run_interval            60
           result_type         recent
@@ -76,6 +91,7 @@ class FileInputTest < Test::Unit::TestCase
           oauth_token_secret  r0JZ258nTeYzfJ6PZcpD8Pd1ulgawXFt2fP5J5lzZ8
           tag                 input.twitter
           keyword             rakuten
+          hashtag             rakuten
           count               1
           run_interval            60
           result_type         recent
@@ -91,7 +107,7 @@ class FileInputTest < Test::Unit::TestCase
              :name,
              :profile_image_url,
              :profile_image_url_https].each do |key|
-                assert_not_nil tweet[key]
+                assert_not_nil tweet[key.to_s]
              end
         end
     end
