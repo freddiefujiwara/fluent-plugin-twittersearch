@@ -10,6 +10,7 @@ module Fluent
         config_param :tag, :string
         config_param :keyword, :string
         config_param :count,   :integer
+        config_param :run_interval,   :integer
         config_param :result_type, :string
 
         attr_reader :twitter
@@ -36,22 +37,30 @@ module Fluent
             @thread = Thread.new(&method(:run))
         end
 
-        def run
-            loop {
-                @urls.each do |url|
-                    Engine.emit @tag, Engine.now , crawl(url)
-                    sleep @sleep if @sleep.to_i > 0
+        def search
+            tweets = []
+            @twitter.search(@keyword,
+                                    :count => @count,
+                                    :result_type => @result_type).results.reverse.map do |result|
+                tweet = {}
+                [:created_at,:id,:text,:retweet_count,:favorite_count].each do |key|
+                    tweet[key] = result[key]
                 end
-            }
-        end
-
-        def crawl(url)
-            response = Net::HTTP.get_response(URI.parse(url))
-            case response
-            when Net::HTTPSuccess
-                return JSON.parse response.body
+                [:id,:screen_name,:name,:profile_image_url,:profile_image_url_https].each do |key|
+                    tweet[key] = result.user[key]
+                end
+                tweet[:time] = Engine.now
+                tweets << tweet
             end
-            raise Fluent::TwittersearchError.new
+            tweets
+        end
+        def run
+            loop do
+                search.each do |tweet|
+                    Engine.emit tweet[:time],@tag, tweet
+                end
+                sleep @run_interval
+            end
         end
 
         def shutdown
