@@ -10,6 +10,7 @@ module Fluent
         config_param :tag, :string
         config_param :keyword, :string
         config_param :count,   :integer
+        config_param :interval,   :integer
         config_param :result_type, :string
 
         attr_reader :twitter
