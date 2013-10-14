@@ -50,8 +50,21 @@ class FileInputTest < Test::Unit::TestCase
         assert_raise Twitter::Error::Unauthorized do
             d.instance.twitter.search(d.instance.keyword,
                                     :count => d.instance.count,
-                                    :result_type => d.instance.result_type).results.reverse.map do |status|
-            end
+                                    :result_type => d.instance.result_type)
         end
+        d = create_driver %[
+          consumer_key        T5dTrSxS3oXqBbaoYZERw
+          consumer_secret     Trg3qrO7dUSkKZeGxgjmi3B11JuFhjwhiWIkwWKDe0
+          oauth_token         1960044126-heQQwLkiqoTj7uEJAVy0WDUZEEZDJfQqk7C4JIz
+          oauth_token_secret  r0JZ258nTeYzfJ6PZcpD8Pd1ulgawXFt2fP5J5lzZ8
+          tag                 input.twitter
+          keyword             rakuten
+          count               100
+          interval            60
+          result_type         recent
+        ]
+        assert_equal 100, d.instance.twitter.search(d.instance.keyword,
+                                :count => d.instance.count,
+                                :result_type => d.instance.result_type).results.count
     end
 end
