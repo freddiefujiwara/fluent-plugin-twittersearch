@@ -1,4 +1,4 @@
-# Fluent::Plugin::Json::Api
+# Fluent::Plugin::Twittersearch
 
 TODO: Write a gem description
 
