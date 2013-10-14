@@ -9,12 +9,26 @@ module Fluent
         config_param :oauth_token_secret, :string
         config_param :tag, :string
         config_param :keyword, :string
+        config_param :count,   :integer
+        config_param :result_type, :string
+
+        attr_reader :twitter
 
         def initialize
             super
-            require 'json'
-            require 'net/http'
-            @urls = []
+            require "twitter"
+        end
+
+        def configure(config)
+            super
+            Twitter.configure do |cnf|   
+                cnf.consumer_key    = @consumer_key
+                cnf.consumer_secret = @consumer_secret
+            end
+            @twitter = Twitter::Client.new(
+                                             :oauth_token => @oauth_token,
+                                             :oauth_token_secret => @oauth_token_secret
+                                            )
         end
 
         def start
