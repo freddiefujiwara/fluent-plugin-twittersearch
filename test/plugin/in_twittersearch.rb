@@ -100,6 +100,7 @@ class FileInputTest < Test::Unit::TestCase
         tweets.each do |tweet|
             [:created_at,
              :id,
+             :user_id,
              :text,
              :retweet_count,
              :favorite_count,
