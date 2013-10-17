@@ -49,9 +49,10 @@ module Fluent
                 [:created_at,:id,:retweet_count,:favorite_count].each do |key|
                     tweet.store(key.to_s, result[key])
                 end
-                [:id,:screen_name,:profile_image_url,:profile_image_url_https].each do |key|
+                [:screen_name,:profile_image_url,:profile_image_url_https].each do |key|
                     tweet.store(key.to_s, result.user[key])
                 end
+                tweet.store('user_id', result.user[:id])
                 tweet.store('text',result.text.force_encoding('utf-8'))
                 tweet.store('name',result.user.name.force_encoding('utf-8'))
                 tweets << tweet
