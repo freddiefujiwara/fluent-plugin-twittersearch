@@ -46,12 +46,13 @@ module Fluent
                                     :result_type => @result_type).results.reverse.map do |result|
 
                 tweet = Hash.new
-                [:created_at,:id,:retweet_count,:favorite_count].each do |key|
-                    tweet.store(key.to_s, result[key])
+                [:id,:retweet_count,:favorite_count].each do |key|
+                    tweet.store(key.to_s, result[key].to_s)
                 end
                 [:screen_name,:profile_image_url,:profile_image_url_https].each do |key|
-                    tweet.store(key.to_s, result.user[key])
+                    tweet.store(key.to_s, result.user[key].to_s)
                 end
+                tweet.store('created_at', result[:created_at].strftime("%Y-%m-%d %H:%M:%S"))
                 tweet.store('user_id', result.user[:id])
                 tweet.store('text',result.text.force_encoding('utf-8'))
                 tweet.store('name',result.user.name.force_encoding('utf-8'))
