@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/freddiefujiwara/fluent-plugin-json-api.png?branch=master)](https://travis-ci.org/freddiefujiwara/fluent-plugin-json-api)
 
-# Fluent::Plugin::Twittersearch
+# Fluent::Plugin::Twittersearch, a plugin for [Fluentd](http://fluentd.org)
 
 TODO: Write a gem description
 
