@@ -20,5 +20,6 @@ Gem::Specification.new do |s|
   s.add_dependency %q<twitter>, ["~> 4.8.1"]
   s.add_dependency %q<rake>,    ["~> 10.1.0"]
 
+  s.add_development_dependency %q<test-unit>, [">= 3.1.0"]
   s.license = 'MIT'
 end
