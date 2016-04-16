@@ -3,10 +3,10 @@ module Fluent
     end
     class TwittersearchInput < Input
         Plugin.register_input('twittersearch', self)
-        config_param :consumer_key, :string
-        config_param :consumer_secret, :string
-        config_param :oauth_token, :string
-        config_param :oauth_token_secret, :string
+        config_param :consumer_key, :string, :secret => true
+        config_param :consumer_secret, :string, :secret => true
+        config_param :oauth_token, :string, :secret => true
+        config_param :oauth_token_secret, :string, :secret => true
         config_param :tag, :string
         config_param :keyword, :string,:default => nil
         config_param :hashtag, :string,:default => nil
